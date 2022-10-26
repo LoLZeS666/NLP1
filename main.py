@@ -1,20 +1,25 @@
 import nltk
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 import string
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
+from collections import Counter
+import seaborn as sns
+import pandas as pd
+import numpy as np
 
-t1 = open("test.txt", encoding="utf8" )
+t1 = open("test.txt", encoding="utf8")
 
 text = []
 words = []
 final = []
 lemmatizer = WordNetLemmatizer()
-def get_wordnet_pos(treebank_tag):
 
+
+def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
     elif treebank_tag.startswith('V'):
@@ -25,6 +30,7 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.ADV
     else:
         return wordnet.NOUN
+
 
 for line in t1:
     text.append(line.strip())
@@ -49,4 +55,15 @@ for sentence in words:
     for word, tag in sentence:
         temp.append((lemmatizer.lemmatize(word, get_wordnet_pos(tag)), tag))
     final.append(temp)
-print(final)
+
+to_plot = []
+
+for sentence in final:
+    for word, tag in sentence:
+        to_plot.append(word)
+
+counted = Counter(to_plot)
+word_freq = pd.DataFrame(counted.items(),columns=['word','frequency']).sort_values(by='frequency',ascending=False)
+word_freq = word_freq.head(20)
+sns.barplot(x='frequency', y='word', data=word_freq)
+plt.show()
