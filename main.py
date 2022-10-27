@@ -42,7 +42,7 @@ for sentence in text:
     punctuationfree = "".join([i for i in sentence if i not in string.punctuation])
     word_tokens = word_tokenize(punctuationfree)
     filtered_sentence = nltk.pos_tag(word_tokens)
-    filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in STOPWORDS]
+    filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in stop_words]
     words.append(filtered_sentence)
 
 for sentence in words:
