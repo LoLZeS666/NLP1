@@ -10,6 +10,7 @@ from collections import Counter
 import seaborn as sns
 import pandas as pd
 import numpy as np
+from wordcloud import WordCloud, STOPWORDS
 
 t1 = open("test.txt", encoding="utf8")
 
@@ -36,18 +37,12 @@ for line in t1:
     text.append(line.strip())
 
 stop_words = set(stopwords.words('english'))
-#
-# for sentence in text:
-#     print(sentence)
 
 for sentence in text:
     punctuationfree = "".join([i for i in sentence if i not in string.punctuation])
     word_tokens = word_tokenize(punctuationfree)
     filtered_sentence = nltk.pos_tag(word_tokens)
     filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in stop_words]
-    # filtered_sentence = [w for w in word_tokens if not w in stop_words]
-    # filtered_sentence = nltk.pos_tag(filtered_sentence)
-    # print(filtered_sentence)
     words.append(filtered_sentence)
 
 for sentence in words:
@@ -58,12 +53,24 @@ for sentence in words:
 
 to_plot = []
 
-for sentence in final:
+for sentence in words:
     for word, tag in sentence:
         to_plot.append(word)
 
 counted = Counter(to_plot)
 word_freq = pd.DataFrame(counted.items(),columns=['word','frequency']).sort_values(by='frequency',ascending=False)
-word_freq = word_freq.head(20)
+word_freq = word_freq.head(30)
 sns.barplot(x='frequency', y='word', data=word_freq)
+plt.show()
+temp = []
+for word in word_freq['word']:
+    temp.append(word)
+
+temp2 = " ".join(temp)+" "
+
+cloud = WordCloud(width=800, height=800, background_color='white', min_font_size=10).generate(temp2)
+plt.figure(figsize=(8,8), facecolor=None)
+plt.imshow(cloud)
+plt.axis("off")
+plt.tight_layout(pad=0)
 plt.show()
