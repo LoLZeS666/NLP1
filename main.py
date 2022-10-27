@@ -1,3 +1,5 @@
+import operator
+
 import nltk
 from matplotlib import pyplot as plt
 import string
@@ -6,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet
-from collections import Counter
+from collections import Counter, defaultdict
 import seaborn as sns
 import pandas as pd
 import numpy as np
@@ -62,6 +64,21 @@ for sentence in words:
         to_plot.append(word)
 counted = Counter(to_plot)
 word_freq = pd.DataFrame(counted.items(),columns=['word','frequency']).sort_values(by='frequency',ascending=False)
+
+mp = defaultdict(int)
+for word in word_freq['word']:
+    mp[len(word)] += 1
+mp = dict( sorted(mp.items(), key=operator.itemgetter(1),reverse=True))
+keys = list(mp.keys())
+vals = [mp[k] for k in keys]
+print(keys)
+print(vals)
+sns.barplot(x=keys, y=vals)
+plt.title("Word length vs frequency")
+plt.xlabel("Word Length")
+plt.ylabel("Frequency")
+plt.show()
+
 word_freq = word_freq.head(30)
 sns.barplot(x='frequency', y='word', data=word_freq)
 plt.show()
@@ -79,3 +96,5 @@ plt.imshow(cloud)
 plt.axis("off")
 plt.tight_layout(pad=0)
 plt.show()
+
+
