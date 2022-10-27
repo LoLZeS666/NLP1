@@ -12,6 +12,7 @@ import pandas as pd
 import numpy as np
 from wordcloud import WordCloud, STOPWORDS
 
+#read book
 t1 = open("test.txt", encoding="utf8")
 
 text = []
@@ -19,7 +20,7 @@ words = []
 final = []
 lemmatizer = WordNetLemmatizer()
 
-
+#helper function
 def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
@@ -32,40 +33,44 @@ def get_wordnet_pos(treebank_tag):
     else:
         return wordnet.NOUN
 
-
+#read sentences
 for line in t1:
     text.append(line.strip())
 
+#set stopwords from nltk corpus
 stop_words = set(stopwords.words('english'))
 
 for sentence in text:
-    punctuationfree = "".join([i for i in sentence if i not in string.punctuation])
-    word_tokens = word_tokenize(punctuationfree)
-    filtered_sentence = nltk.pos_tag(word_tokens)
-    filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in stop_words]
+    punctuationfree = "".join([i for i in sentence if i not in string.punctuation])  #remove punctuation
+    word_tokens = word_tokenize(punctuationfree)   #tokenize words
+    filtered_sentence = nltk.pos_tag(word_tokens)  #part of speech tagging for words based on treebank tagset
+    filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in stop_words] #remove stopwords
     words.append(filtered_sentence)
 
 for sentence in words:
     temp = []
     for word, tag in sentence:
-        temp.append((lemmatizer.lemmatize(word, get_wordnet_pos(tag)), tag))
+        temp.append((lemmatizer.lemmatize(word, get_wordnet_pos(tag)), tag))   #lemmatize using pos tag
     final.append(temp)
 
-to_plot = []
 
+
+#word frequency plots
+to_plot = []
 for sentence in words:
     for word, tag in sentence:
         to_plot.append(word)
-
 counted = Counter(to_plot)
 word_freq = pd.DataFrame(counted.items(),columns=['word','frequency']).sort_values(by='frequency',ascending=False)
 word_freq = word_freq.head(30)
 sns.barplot(x='frequency', y='word', data=word_freq)
 plt.show()
+
+
+#wordcloud
 temp = []
 for word in word_freq['word']:
     temp.append(word)
-
 temp2 = " ".join(temp)+" "
 
 cloud = WordCloud(width=800, height=800, background_color='white', min_font_size=10).generate(temp2)
