@@ -44,7 +44,7 @@ for sentence in text:
     punctuationfree = "".join([i for i in sentence if i not in string.punctuation])  #remove punctuation
     word_tokens = word_tokenize(punctuationfree)   #tokenize words
     filtered_sentence = nltk.pos_tag(word_tokens)  #part of speech tagging for words based on treebank tagset
-    filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in stop_words] #remove stopwords
+    filtered_sentence = [(w.casefold(), t) for w, t in filtered_sentence if not w.lower() in STOPWORDS] #remove stopwords
     words.append(filtered_sentence)
 
 for sentence in words:
