@@ -42,9 +42,6 @@ def get_wordnet_pos(treebank_tag):
 for line in t1:
     text.append(line.strip())
 
-#set stopwords from nltk corpus
-stop_words = set(stopwords.words('english'))
-
 for sentence in text:
     punctuationfree = "".join([i for i in sentence if i not in string.punctuation and not i.isdigit()])  #remove punctuation
     word_tokens = word_tokenize(punctuationfree)   #tokenize words
