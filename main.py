@@ -16,7 +16,7 @@ from pattern.text.en import singularize
 import inflect
 
 #read book
-t1 = open("test2.txt", encoding="utf8")
+t1 = open("book1.txt", encoding="utf8")
 
 text = []
 words = []
