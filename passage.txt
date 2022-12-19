@@ -1,0 +1,41 @@
+Telnet,  defined  in   RFC  854,  is  a popular   application-layer    protocol   used  for
+remote login.  It runs over  TCP and is designed to work  between any pair  of hosts.
+Unlike  the  bulk  data  transfer  applications   discussed in  Chapter  2, Telnet  is  an
+interactive  application.   We discuss a Telnet example  here, as it  nicely  illustrates
+TCP sequence  and  acknowledgment   numbers.  We  note  that  many  users  now
+prefer to use the SSH  protocol  rather than Telnet,  since data sent in a Telnet  con-
+nection  (including   passwords!)   is  not  encrypted,  making   Telnet  vulnerable   to
+eavesdropping attacks (as discussed in Section 8.7).
+       Suppose Host A initiates a Telnet session with Host B. Because Host A initiates
+the session, it is labeled the client,  and Host B is labeled the server. Each character
+typed by the user (at the client) will   be sent to the remote host; the remote host will
+send back a copy of  each character, which  will   be displayed  on the Telnet  user’s
+screen. This “echo  back”  is used to ensure that characters seen by the Telnet  user
+have already been received  and processed at the remote site.  Each character thus
+traverses the network twice  between the time the user hits the key  and the time the
+character is displayed on the user’s monitor.
+       Now suppose the user types a single letter, ‘C,’ and then grabs a coffee. Let’s exam-
+ine the TCP segments that are sent between the client and server. As shown in Figure
+3.31, we suppose the starting sequence numbers are 42 and 79 for the client and server,
+respectively. Recall that the sequence number of a segment is the sequence number of
+the first byte in  the data field. Thus,  the first segment sent from the client  will  have
+sequence number 42; the first segment sent from the server will have sequence number
+79. Recall that the acknowledgment number is the sequence number of the next byte of
+data that the host is waiting for. After the TCP connection is established but before any
+data is sent, the client is waiting for byte 79 and the server is waiting for byte 42.
+       As shown in Figure 3.31, three segments are sent. The first segment is sent from
+the client to the server, containing  the 1-byte ASCII  representation of  the letter ‘C’
+in its data field.  This  first  segment also has 42 in its sequence number field,  as we
+just described. Also, because the client has not yet received any data from the server,
+this first segment will  have 79 in its acknowledgment  number field.
+       The second segment is sent from  the server to the client.  It  serves a dual pur-
+pose. First it  provides an acknowledgment  of  the data the server has received.  By
+putting 43 in the acknowledgment field,  the server is telling the client that it  has suc-
+cessfully  received everything  up through  byte 42  and is now waiting   for bytes  43
+onward. The second purpose of this segment is to echo back the letter ‘C.’ Thus, the
+second segment has the ASCII  representation of  ‘C’ in   its data field.  This  second
+segment has the sequence number 79, the initial sequence number of the server-to-
+client data flow  of this  TCP connection, as this is the very first  byte of  data that the
+server is sending. Note that the acknowledgment  for client-to-server  data is carried
+in  a segment  carrying  server-to-client   data;  this  acknowledgment   is said  to  be
+piggybacked on  the server-to-client data segment.
